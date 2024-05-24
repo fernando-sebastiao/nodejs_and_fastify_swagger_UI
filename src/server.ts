@@ -6,7 +6,7 @@ export const app: FastifyInstance = fastify();
 app.register(routes);
 
 app.get("/", async (req, rep) => {
-  rep.send("Everthing is gonna well!");
+  rep.send({ message: "EVerthing is gonna well!" });
 });
 
 app.listen({ port: 8800 }, (err, address) => {
