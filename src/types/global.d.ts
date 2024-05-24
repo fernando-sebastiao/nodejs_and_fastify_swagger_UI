@@ -1,4 +1,4 @@
-export interface pessoas {
+export interface pessoa {
   id: number;
   name: string;
   nascimento: Date;
@@ -7,13 +7,13 @@ export interface pessoas {
 export interface produtos {
   id: number;
   produto: string;
-  price: string;
+  price: number;
 }
 
-interface casa {
-  pessoa: pessoas[];
+export interface casa {
+  familia: pessoa[];
 }
 
 export interface store {
-  produtos: pessoas;
+  Banca: produtos[];
 }
