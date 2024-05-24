@@ -1,10 +1,17 @@
-import fastify from "fastify";
+import fastify, { FastifyInstance } from "fastify";
+import { routes } from "./routes/routes";
 
-export const app = fastify();
+export const app: FastifyInstance = fastify();
 
-app.listen({ port: 8000 }, (err, address) => {
+app.register(routes);
+
+app.get("/", async (req, rep) => {
+  rep.send("Everthing is gonna well!");
+});
+
+app.listen({ port: 8800 }, (err, address) => {
   if (err) {
     console.log(err);
   }
-  console.log("Servidor rodando na porta 8000");
+  console.log(`Servidor rodando na porta ${address}`);
 });
