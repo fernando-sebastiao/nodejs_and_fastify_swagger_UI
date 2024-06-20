@@ -16,5 +16,5 @@ app.listen({ port: 8800 }, (err, address) => {
   if (err) {
     console.log(err);
   }
-  console.log(`Servidor rodando na porta ${address}`);
+  console.log(`🔥 Servidor rodando na porta ${address}`);
 });
