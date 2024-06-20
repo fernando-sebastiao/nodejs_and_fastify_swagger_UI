@@ -9,12 +9,12 @@ app.register(routes);
 app.register(cors, {});
 
 app.get("/", async (req, rep) => {
-  rep.send({ message: "Everthing is gonna well!" });
+  rep.send({ message: "Everthing is gonna well! ✨" });
 });
 
-app.listen({ port: 8800 }, (err, address) => {
+const server = app.listen({ port: 8800 }, (err, address) => {
   if (err) {
     console.log(err);
   }
-  console.log(`🔥 Servidor rodando na porta ${address}`);
+  console.log(`🔥 Server running on PORT: ${address}`);
 });
