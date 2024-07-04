@@ -11,12 +11,14 @@
   "description": "",
   "devDependencies": {
     "tsx": "^4.10.5",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "@prisma/client": "^5.15.0"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
     "@types/node": "^20.12.12",
     "fastify": "^4.27.0",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "zod": "^3.23.8"
   }
 }

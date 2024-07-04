@@ -9,12 +9,20 @@ app.register(routes);
 app.register(cors, {});
 
 app.get("/", async (req, rep) => {
-  rep.send({ message: "Everthing is gonna well! ✨" });
+  rep.send({ message: "Everthing is gonna' well! ✨" });
 });
 
-const server = app.listen({ port: 8800 }, (err, address) => {
+app.listen({ port: 8800 }, (err, address) => {
   if (err) {
     console.log(err);
   }
   console.log(`🔥 Server running on PORT: ${address}`);
+});
+process.on("SIGINT", () => {
+  app.close(async () => {
+    console.log("Parando serviço");
+    // await prisma.$disconnect();
+    console.log("A conexão com o banco de dados foi finalizada");
+  });
+  console.log("Parando Servidor");
 });
