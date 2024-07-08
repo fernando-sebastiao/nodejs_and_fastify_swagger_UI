@@ -20,6 +20,8 @@
     "fastify": "^4.27.0",
     "fastify-type-provider-zod": "^2.0.0",
     "ts-node-dev": "^2.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^3.0.0"
   }
 }
