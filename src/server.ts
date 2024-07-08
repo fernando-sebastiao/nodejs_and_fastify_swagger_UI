@@ -1,26 +1,67 @@
 import cors from "@fastify/cors";
-import fastify from "fastify";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import fastify, { FastifyInstance } from "fastify";
+import { routes } from "./routes/routes";
 
-const server = fastify({ logger: true });
+export const app: FastifyInstance = fastify({ logger: true });
 
-server.register(cors, { origin: "*" });
+app.register(routes);
 
-server.route({
+app.register(cors, { origin: "*" });
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "RH Module",
+      description: "Fastify backed-end module for Tecno Bantu.",
+      version: "1.0.0",
+    },
+    servers: [
+      {
+        url: "http://localhost:8800",
+      },
+    ],
+  },
+});
+
+app.register(fastifySwaggerUi, {
+  routePrefix: "/docs",
+  uiConfig: {
+    docExpansion: "none", // Pode ser 'none', 'list' ou 'full'
+    deepLinking: true,
+    displayOperationId: true,
+    defaultModelsExpandDepth: 1,
+    defaultModelExpandDepth: 1,
+    defaultModelRendering: "example",
+    displayRequestDuration: true,
+    filter: true,
+    showExtensions: true,
+    showCommonExtensions: true,
+  },
+});
+
+app.get("/", async (request, reply) => {
+  return { message: "Server running correctly" };
+});
+
+app.route({
   method: "GET",
   url: "/hello/:name",
   handler: async (request, reply) => {
     const { name } = request.params as { name: string };
     return {
-      message: `Hello! ${name}, espero que esteja tudo bem!`,
+      message: `Hello! ${name}, I hope you're doing well!`,
     };
   },
 });
+
 const start = async () => {
   try {
-    await server.listen({ port: 8800 });
-    server.log.info(`Servidor rodando em http://localhost:8800`);
+    await app.listen({ port: 8800 });
+    app.log.info(`Server running on http://localhost:8800`);
   } catch (err) {
-    server.log.error(err);
+    app.log.error(err);
     process.exit(1);
   }
 };
