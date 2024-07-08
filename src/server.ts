@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastify, { FastifyInstance } from "fastify";
+import checkDatabase from "./middleware/checkdatabase";
 import { routes } from "./routes/routes";
 
 export const app: FastifyInstance = fastify({ logger: true });
@@ -68,3 +69,4 @@ const start = async () => {
 };
 
 start();
+app.register(checkDatabase);
