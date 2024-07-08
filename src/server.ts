@@ -1,9 +1,33 @@
 import cors from "@fastify/cors";
+import fastifySwagger from "@fastify/swagger";
 import fastify from "fastify";
+import { jsonSchemaTransform } from "fastify-type-provider-zod";
 
 const server = fastify({ logger: true });
 
 server.register(cors, { origin: "*" });
+server.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "RH Module",
+      description: "Fastify backed-end module for Tecno Bantu.",
+      version: "1.0.0",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+  transform: jsonSchemaTransform,
+});
+server.register(import("@fastify/swagger-ui"), {
+  routePrefix: "/docs",
+});
 
 server.route({
   method: "GET",
