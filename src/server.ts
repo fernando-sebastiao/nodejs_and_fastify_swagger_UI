@@ -1,28 +1,29 @@
 import cors from "@fastify/cors";
-import fastify, { FastifyInstance } from "fastify";
-import { routes } from "./routes/routes";
+import fastify from "fastify";
 
-export const app: FastifyInstance = fastify();
+const server = fastify({ logger: true });
 
-app.register(routes);
+server.register(cors, { origin: "*" });
 
-app.register(cors, {});
-
-app.get("/", async (req, rep) => {
-  rep.send({ message: "Everthing is gonna' well! ✨" });
+server.route({
+  method: "GET",
+  url: "/hello/:name",
+  handler: async (request, reply) => {
+    const { name } = request.params as { name: string };
+    return {
+      message: `Hello! ${name}, espero que esteja tudo bem!`,
+    };
+  },
 });
 
-app.listen({ port: 8800 }, (err, address) => {
-  if (err) {
-    console.log(err);
+const start = async () => {
+  try {
+    await server.listen({ port: 8800 });
+    server.log.info(`Servidor rodando em http://localhost:8800`);
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
   }
-  console.log(`🔥 Server running on PORT: ${address}`);
-});
-process.on("SIGINT", () => {
-  app.close(async () => {
-    console.log("Parando serviço");
-    // await prisma.$disconnect();
-    console.log("A conexão com o banco de dados foi finalizada");
-  });
-  console.log("Parando Servidor");
-});
+};
+
+start();
