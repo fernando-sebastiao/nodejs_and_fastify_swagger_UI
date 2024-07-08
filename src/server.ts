@@ -15,7 +15,6 @@ server.route({
     };
   },
 });
-
 const start = async () => {
   try {
     await server.listen({ port: 8800 });
