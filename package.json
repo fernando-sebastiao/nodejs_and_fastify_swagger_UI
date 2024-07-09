@@ -27,6 +27,7 @@
     "@fastify/swagger-ui": "^4.0.0",
     "@types/node": "^20.14.10",
     "bcrypt": "^5.1.1",
+    "dayjs": "^1.11.11",
     "fastify": "^4.28.1",
     "fastify-type-provider-zod": "^2.0.0",
     "glob": "^10.4.3",
