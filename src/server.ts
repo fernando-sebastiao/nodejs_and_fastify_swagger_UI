@@ -9,6 +9,7 @@ import { routes } from "./routes/routes";
 export const app: FastifyInstance = fastify({ logger: true });
 
 app.register(routes);
+
 app.register(cors, { origin: "*" });
 
 app.register(fastifySwagger, {
@@ -56,10 +57,8 @@ app.route({
     };
   },
 });
-
-app.setErrorHandler(errorHandler); // Configurando o middleware de tratamento de erros
+app.setErrorHandler(errorHandler);
 app.register(checkDatabase);
-
 const start = async () => {
   try {
     await app.listen({ port: 8800 });
