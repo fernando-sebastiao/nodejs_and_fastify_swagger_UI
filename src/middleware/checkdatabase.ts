@@ -1,5 +1,5 @@
 import { main } from "../../prisma/seed";
-import { db } from "../database/db";
+import { db } from "../lib/db";
 
 const checkDatabase = async function () {
   const UserCount = await db.user.count();
