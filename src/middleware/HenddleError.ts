@@ -1,11 +1,10 @@
-// import { NextFunction, Request, Response } from "express";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { CustomError } from "../errors/CustomError";
 
 export function errorHandler(
-  err: Error,
-  res: FastifyReply,
-  req: FastifyRequest
+  err: FastifyError,
+  req: FastifyRequest,
+  res: FastifyReply
 ) {
   if (err instanceof CustomError) {
     return res.status(err.statusCode).send({
