@@ -23,6 +23,9 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^4.0.0
         version: 4.0.0
+      '@prisma/client':
+        specifier: 5.16.1
+        version: 5.16.1
       '@types/node':
         specifier: ^20.14.10
         version: 20.14.10
@@ -60,9 +63,6 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
-      '@prisma/client':
-        specifier: ^5.16.1
-        version: 5.16.1
       '@types/faker':
         specifier: ^6.6.9
         version: 6.6.9
