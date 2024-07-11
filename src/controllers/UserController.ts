@@ -11,10 +11,12 @@ export class UserController {
         tags: ["User"],
         body: z.object({
           username: z
-            .string()
+            .string({ required_error: "username is required" })
             .min(5, "The username must be at least 5 characters"),
           password: z.string().min(6),
-          email: z.string().email({ message: "Invalid email" }),
+          email: z
+            .string({ required_error: "email is required" })
+            .email({ message: "Invalid email" }),
         }),
         response: {
           201: {
