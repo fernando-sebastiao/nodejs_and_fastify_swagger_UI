@@ -15,43 +15,6 @@ export class ProjectControler {
           description: z.string().min(4, { message: "description must" }),
           userId: z.number().int().positive(),
         }),
-        response: {
-          201: {
-            description: "Project created successfully",
-            type: "object",
-            properties: {
-              name: { type: "string", example: "Go to the park" },
-              description: {
-                type: "string",
-                example: "It´s so very good go over there!",
-              },
-              userId: { type: "number", example: "7bekndinindsfsfdf3dd34d" },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            type: "object",
-            properties: {
-              error: { type: "number", example: "invalid type Userid" },
-            },
-          },
-        },
-        examples: {
-          success: {
-            summary: "Successful user creation",
-            value: {
-              name: "something",
-              description: "everthing is gonna well!",
-              userId: "7b3433rfdwe3fwewdef3",
-            },
-          },
-          error: {
-            summary: "Project creation error",
-            value: {
-              error: "UserId not found",
-            },
-          },
-        },
       },
       handler: async (request, reply) => {
         const { name, description, userId } = request.body;

@@ -12,7 +12,7 @@ export class UserController {
         body: z.object({
           username: z
             .string({ required_error: "Username is required" })
-            .min(4, "The username must be at least 5 characters long"),
+            .min(4, "The username must be at least 3 characters long"),
           password: z
             .string({ required_error: "Password is required" })
             .min(6, "Password must be at least 6 characters long"),
@@ -24,14 +24,9 @@ export class UserController {
       handler: async (request, reply) => {
         const { username, password, email } = request.body;
         // Verificar se o email já existe
-        const verificarEmail = await db.user.findUniqueOrThrow({
+        await db.user.findUniqueOrThrow({
           where: { email },
         });
-
-        if (verificarEmail) {
-          throw new Error("This email already exists!");
-        }
-
         const user = await db.user.create({
           data: {
             username,
