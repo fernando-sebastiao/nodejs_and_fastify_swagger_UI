@@ -1,24 +1,24 @@
 import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import fastify, { FastifyInstance } from "fastify";
+import fastify from "fastify";
 import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import checkDatabase from "./middleware/checkdatabase";
 import { errorHandler } from "./middleware/HenddleError";
 import { routes } from "./routes/routes";
 
-export const app: FastifyInstance = fastify({ logger: true });
+export const app = fastify();
 
-app.register(routes);
-
+// Registre o plugin de CORS
 app.register(cors, { origin: "*" });
 
+// Configure o compilador de validadores e serializadores
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+// Registre o plugin do Swagger
 app.register(fastifySwagger, {
   openapi: {
     info: {
@@ -34,6 +34,7 @@ app.register(fastifySwagger, {
   },
 });
 
+// Registre o plugin do Swagger UI
 app.register(fastifySwaggerUi, {
   routePrefix: "/docs",
   uiConfig: {
@@ -50,26 +51,33 @@ app.register(fastifySwaggerUi, {
   },
 });
 
+// Defina uma rota simples de teste
 app.get("/", async (request, reply) => {
   return { message: "Server running correctly" };
 });
 
+// Defina uma rota de exemplo
 app.route({
   method: "GET",
   url: "/hello/:name",
   handler: async (request, reply) => {
     const { name } = request.params as { name: string };
-    return {
-      message: `Hello! ${name}, I hope you're doing well!`,
-    };
+    return { message: `Hello! ${name}, I hope you're doing well!` };
   },
 });
+
+// Registre as rotas importadas
+app.register(routes);
+
+// Defina o manipulador de erros
 app.setErrorHandler(errorHandler);
-app.register(checkDatabase);
+
+// Inicie o servidor
 const start = async () => {
   try {
     await app.listen({ port: 8800 });
     app.log.info(`Server running on http://localhost:8800`);
+    console.log("Server running on PORT: 8800");
   } catch (err) {
     app.log.error(err);
     console.log(err);
