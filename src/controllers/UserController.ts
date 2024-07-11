@@ -21,48 +21,9 @@ export class UserController {
             .string({ required_error: "Email is required" })
             .email("Invalid email format"),
         }),
-        response: {
-          201: {
-            description: "User created successfully",
-            type: "object",
-            properties: {
-              username: { type: "string", example: "john_doe" },
-              password: { type: "string", example: "password123" },
-              email: { type: "string", example: "john@example.com" },
-            },
-          },
-          400: {
-            description: "Bad Request",
-            type: "object",
-            properties: {
-              error: { type: "string", example: "This email already exists" },
-            },
-          },
-        },
-        examples: {
-          success: {
-            summary: "Successful user creation",
-            value: {
-              username: "john_doe",
-              password: "password123",
-              email: "john@example.com",
-            },
-          },
-          error: {
-            summary: "User creation error",
-            value: {
-              error: "This email already exists",
-            },
-          },
-        },
       },
       handler: async (request, reply) => {
-        const { username, password, email } = request.body as {
-          username: string;
-          password: string;
-          email: string;
-        };
-
+        const { username, password, email } = request.body;
         // Verificar se o email já existe
         const verificarEmail = await db.user.findFirst({
           where: { email },
