@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
-import { CustomError } from "../errors/CustomError";
 import { db } from "../lib/db";
 
 export class UserController {
@@ -13,7 +12,7 @@ export class UserController {
         body: z.object({
           username: z
             .string({ required_error: "Username is required" })
-            .min(5, "The username must be at least 5 characters long"),
+            .min(4, "The username must be at least 5 characters long"),
           password: z
             .string({ required_error: "Password is required" })
             .min(6, "Password must be at least 6 characters long"),
@@ -25,14 +24,12 @@ export class UserController {
       handler: async (request, reply) => {
         const { username, password, email } = request.body;
         // Verificar se o email já existe
-        const verificarEmail = await db.user.findFirst({
+        const verificarEmail = await db.user.findUniqueOrThrow({
           where: { email },
         });
 
         if (verificarEmail) {
-          throw new CustomError("This email already exists", 400, [
-            "This type of email already exists!",
-          ]);
+          throw new Error("This email already exists!");
         }
 
         const user = await db.user.create({
