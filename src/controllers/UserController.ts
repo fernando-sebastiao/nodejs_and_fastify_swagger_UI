@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { CustomError } from "../errors/CustomError";
 import { db } from "../lib/db";
+
 export class UserController {
   async createUser(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>().post("/user", {
@@ -11,34 +12,46 @@ export class UserController {
         tags: ["User"],
         body: z.object({
           username: z
-            .string({ required_error: "username is required" })
-            .min(5, "The username must be at least 5 characters"),
-          password: z.string().min(6),
+            .string({ required_error: "Username is required" })
+            .min(5, "The username must be at least 5 characters long"),
+          password: z
+            .string({ required_error: "Password is required" })
+            .min(6, "Password must be at least 6 characters long"),
           email: z
-            .string({ required_error: "email is required" })
-            .email({ message: "Invalid email" }),
+            .string({ required_error: "Email is required" })
+            .email("Invalid email format"),
         }),
         response: {
           201: {
             description: "User created successfully",
             type: "object",
             properties: {
-              message: { type: "string" },
-              user: {
-                type: "object",
-                properties: {
-                  id: { type: "string" },
-                  username: { type: "string" },
-                  email: { type: "string" },
-                },
-              },
+              username: { type: "string", example: "john_doe" },
+              password: { type: "string", example: "password123" },
+              email: { type: "string", example: "john@example.com" },
             },
           },
           400: {
             description: "Bad Request",
             type: "object",
             properties: {
-              message: { type: "string" },
+              error: { type: "string", example: "This email already exists" },
+            },
+          },
+        },
+        examples: {
+          success: {
+            summary: "Successful user creation",
+            value: {
+              username: "john_doe",
+              password: "password123",
+              email: "john@example.com",
+            },
+          },
+          error: {
+            summary: "User creation error",
+            value: {
+              error: "This email already exists",
             },
           },
         },
@@ -49,15 +62,18 @@ export class UserController {
           password: string;
           email: string;
         };
-        // Verificar se o nome de usuário já existe
+
+        // Verificar se o email já existe
         const verificarEmail = await db.user.findFirst({
           where: { email },
         });
+
         if (verificarEmail) {
           throw new CustomError("This email already exists", 400, [
             "This type of email already exists!",
           ]);
         }
+
         const user = await db.user.create({
           data: {
             username,
@@ -65,7 +81,8 @@ export class UserController {
             email,
           },
         });
-        return reply.status(201).send({ message: "User created", user });
+
+        return reply.status(201).send(user);
       },
     });
   }
