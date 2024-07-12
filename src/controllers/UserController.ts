@@ -135,3 +135,4 @@ export async function deleteUser(app: FastifyInstance) {
     }
   );
 }
+//tirando bugs
