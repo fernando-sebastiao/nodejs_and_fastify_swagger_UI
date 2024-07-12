@@ -100,7 +100,7 @@ export async function getUserbyId(app: FastifyInstance) {
     }
   );
 }
-
+//deletar usuário
 export async function deleteUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
     "/user/:userId",
@@ -120,25 +120,28 @@ export async function deleteUser(app: FastifyInstance) {
     async (request, response) => {
       const { userId } = request.params as { userId: number };
 
-      const verificar = await db.user.delete({
-        where: {
-          id: userId,
-        },
-        select: {
-          id: true,
-          username: true,
-        },
+      // Primeiro, verificar se o usuário existe
+      const verificar = await db.user.findUnique({
+        where: { id: userId },
+        select: { id: true, username: true },
       });
 
       if (!verificar) {
         throw new ClientError("User not found!");
       }
-      await db.user.delete({
-        where: {
-          id: userId,
+
+      // Deletar o usuário
+      const deletedUser = await db.user.delete({
+        where: { id: userId },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          createdAt: true,
         },
       });
-      return response.code(200).send(verificar);
+
+      return response.code(200).send(deletedUser);
     }
   );
 }

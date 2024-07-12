@@ -18,6 +18,7 @@ app.register(cors, { origin: "*" });
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+// Defina o manipulador de erros
 app.setErrorHandler(errorHandler);
 
 // Registre o plugin do Swagger
@@ -70,9 +71,6 @@ app.route({
 
 // Registre as rotas importadas
 app.register(routes);
-
-// Defina o manipulador de erros
-app.setErrorHandler(errorHandler);
 
 // Inicie o servidor
 const start = async () => {
