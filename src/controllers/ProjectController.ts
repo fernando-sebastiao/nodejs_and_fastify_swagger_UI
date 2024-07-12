@@ -10,14 +10,31 @@ export async function createproject(app: FastifyInstance) {
       description: "Create a new project",
       tags: ["Project"],
       body: z.object({
-        name: z.string().min(4, { message: "name must have 4 caracter" }),
+        name: z
+          .string({ message: "This field must receive type string!" })
+          .min(4, { message: "name must have 4 caracter" }),
         description: z.string().min(4, { message: "description must" }),
         userId: z.number().int().positive(),
       }),
     },
     handler: async (request, reply) => {
       const { name, description, userId } = request.body;
-
+      //verficar se o projecto já existe e esta atribuido a um usuario
+      const verificarprojecto = await db.project.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      if (verificarprojecto?.user.id === userId) {
+        throw new ClientError("This project is already authenticated");
+      }
       // Verificar se o email já existe
       const verificarUser = await db.user.findFirst({
         where: { id: userId },
