@@ -187,7 +187,7 @@ export async function updateUser(app: FastifyInstance) {
           id: userId,
         },
       });
-      if (verificar) {
+      if (!verificar) {
         throw new ClientError("User not found!");
       }
       const updatingUser = await db.user.update({
