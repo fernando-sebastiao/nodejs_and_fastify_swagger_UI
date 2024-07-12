@@ -1,9 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import z, { Schema } from "zod";
+import z from "zod";
 import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
-import { Prisma } from "@prisma/client";
 
 export async function createUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/user/create", {
