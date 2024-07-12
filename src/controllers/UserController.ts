@@ -152,3 +152,5 @@ export async function deleteUser(app: FastifyInstance) {
     }
   );
 }
+
+export async function updateUser(app: FastifyInstance) {}
