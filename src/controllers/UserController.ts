@@ -67,3 +67,36 @@ export async function getallUsers(app: FastifyInstance) {
 }
 
 //consultar users
+export async function getUserbyId(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/user/:userId",
+    {
+      schema: {
+        params: z.object({
+          userId: z
+            .number({ message: "This field must receive number" })
+            .int()
+            .positive(),
+        }),
+      },
+    },
+    async (request, replay) => {
+      const { userId } = request.params;
+
+      const user = await db.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+      if (!user) {
+        throw new ClientError("User not found");
+      }
+      return replay.code(200).send(user);
+    }
+  );
+}
