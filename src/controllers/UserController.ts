@@ -152,5 +152,58 @@ export async function deleteUser(app: FastifyInstance) {
     }
   );
 }
+//atualizar user
+export async function updateUser(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().put(
+    "/user/:userId",
+    {
+      schema: {
+        params: z.object({
+          userId: z.string().transform((val) => {
+            const num = Number(val);
+            if (isNaN(num) || num <= 0) {
+              throw new Error("Invalid userId");
+            }
+            return num;
+          }),
+        }),
+        body: z.object({
+          username: z.string({
+            message: "This field must receive string",
+            required_error: "This field cannot be empty!",
+          }),
+          email: z.string().email(),
+          password: z.string().min(6),
+        }),
+      },
+    },
+    async (request, response) => {
+      const { userId } = request.params;
+      const { username, password, email } = request.body;
 
-export async function updateUser(app: FastifyInstance) {}
+      //verificar se o userId existe
+      const verificar = await db.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+      if (verificar) {
+        throw new ClientError("User not found!");
+      }
+      const updatingUser = await db.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          username,
+          password,
+          email,
+        },
+      });
+      return response.code(200).send({
+        username: updatingUser.username,
+        email: updatingUser.email,
+      });
+    }
+  );
+}
