@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z, { Schema } from "zod";
 import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
+import { Prisma } from "@prisma/client";
 
 export async function createUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/user/create", {
@@ -101,38 +102,44 @@ export async function getUserbyId(app: FastifyInstance) {
   );
 }
 
-//deletarUser
 export async function deleteUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().delete(
     "/user/:userId",
     {
       schema: {
         params: z.object({
-          userId: z.number().int().positive(),
+          userId: z.string().transform((val) => {
+            const num = Number(val);
+            if (isNaN(num) || num <= 0) {
+              throw new Error("Invalid userId");
+            }
+            return num;
+          }),
         }),
       },
     },
     async (request, response) => {
       const { userId } = request.params as { userId: number };
 
-      const user = await db.user.findUnique({
+      const verificar = await db.user.delete({
         where: {
           id: userId,
         },
-        include: {
-          projects: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+        select: {
+          id: true,
+          username: true,
         },
       });
-      if (!user) {
+
+      if (!verificar) {
         throw new ClientError("User not found!");
       }
-      return response.code(200).send(user);
+      await db.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+      return response.code(200).send(verificar);
     }
   );
 }
-//tirando bugs
