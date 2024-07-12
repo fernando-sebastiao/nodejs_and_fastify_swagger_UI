@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
-import { CustomError } from "../errors/CustomError";
+import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 
 export async function createproject(app: FastifyInstance) {
@@ -24,9 +24,7 @@ export async function createproject(app: FastifyInstance) {
       });
 
       if (!verificarUser) {
-        throw new CustomError("This User does not exists", 400, [
-          "User not found!",
-        ]);
+        throw new ClientError("This User does not exists");
       }
 
       const project = await db.project.create({

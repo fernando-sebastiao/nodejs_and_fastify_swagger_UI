@@ -6,7 +6,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
-import { errorHandler } from "./middleware/HenddleError";
+import { errorHandler } from "./error-handler";
 import { routes } from "./routes/routes";
 
 export const app = fastify();
@@ -17,6 +17,8 @@ app.register(cors, { origin: "*" });
 // Configure o compilador de validadores e serializadores
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+app.setErrorHandler(errorHandler);
 
 // Registre o plugin do Swagger
 app.register(fastifySwagger, {

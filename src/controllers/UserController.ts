@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 
 export async function createUser(app: FastifyInstance) {
@@ -23,9 +24,17 @@ export async function createUser(app: FastifyInstance) {
     handler: async (request, reply) => {
       const { username, password, email } = request.body;
       // Verificar se o email já existe
-      await db.user.findUniqueOrThrow({
+      const verificarnome = await db.user.findFirst({ where: { username } });
+      if (verificarnome) {
+        throw new ClientError("This username alreay exists!");
+      }
+
+      const verificaremail = await db.user.findUnique({
         where: { email },
       });
+      if (verificaremail) {
+        throw new ClientError("This email alreay exists!");
+      }
       const user = await db.user.create({
         data: {
           username,
