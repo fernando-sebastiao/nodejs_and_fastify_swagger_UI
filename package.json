@@ -25,6 +25,7 @@
     "@fastify/jwt": "^8.0.1",
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^4.0.0",
+    "@prisma/client": "5.16.1",
     "@types/node": "^20.14.10",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.11",
@@ -36,7 +37,6 @@
     "openapi-types": "^12.1.3",
     "rimraf": "^5.0.8",
     "ts-node-dev": "^2.0.0",
-    "zod": "^3.23.8",
-    "@prisma/client": "5.16.1"
+    "zod": "^3.23.8"
   }
 }

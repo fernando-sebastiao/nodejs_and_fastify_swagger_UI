@@ -100,3 +100,38 @@ export async function getUserbyId(app: FastifyInstance) {
     }
   );
 }
+
+//deletarUser
+export async function deleteUser(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().delete(
+    "/user/:userId",
+    {
+      schema: {
+        params: z.object({
+          userId: z.number().int().positive(),
+        }),
+      },
+    },
+    async (request, response) => {
+      const { userId } = request.params as { userId: number };
+
+      const user = await db.user.findUnique({
+        where: {
+          id: userId,
+        },
+        include: {
+          projects: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+      if (!user) {
+        throw new ClientError("User not found!");
+      }
+      return response.code(200).send(user);
+    }
+  );
+}
