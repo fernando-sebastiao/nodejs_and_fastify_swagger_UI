@@ -74,9 +74,16 @@ export async function getUserbyId(app: FastifyInstance) {
       schema: {
         params: z.object({
           userId: z
-            .number({ message: "This field must receive number" })
-            .int()
-            .positive(),
+            .string({ message: "This field must receive number" })
+            .transform((valor) => {
+              const dados = Number(valor);
+              if (isNaN(dados) || dados <= 0) {
+                throw new ClientError(
+                  "This field must receive a positive number"
+                );
+              }
+              return dados;
+            }),
         }),
       },
     },
