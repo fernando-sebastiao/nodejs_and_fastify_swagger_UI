@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import z from "zod";
+import z, { Schema } from "zod";
 import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 
@@ -47,3 +47,23 @@ export async function createUser(app: FastifyInstance) {
     },
   });
 }
+
+//pegar todos os users
+export async function getallUsers(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/users",
+    {
+      schema: {
+        description: "Get all users",
+        tags: ["User"],
+      },
+    },
+    async (request, replay) => {
+      const user = await db.user.findMany();
+
+      return replay.code(200).send(user);
+    }
+  );
+}
+
+//consultar users
