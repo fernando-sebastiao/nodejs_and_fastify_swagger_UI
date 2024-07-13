@@ -4,6 +4,7 @@ import z from "zod";
 import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 import { hash } from "crypto";
+import bycrpt from "bcrypt";
 
 export async function createUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/user/create", {
@@ -36,16 +37,18 @@ export async function createUser(app: FastifyInstance) {
       if (verificaremail) {
         throw new ClientError("This email alreay exists!");
       }
-      // const hashPassword = await hash(password, 8);
+      const hashPassword = await bycrpt.hash(password, 8);
       const user = await db.user.create({
         data: {
           username,
-          password,
+          password: hashPassword,
           email,
         },
       });
 
-      return reply.status(201).send(user);
+      return reply
+        .status(201)
+        .send({ data: [{ username: user.username, email: user.email }] });
     },
   });
 }

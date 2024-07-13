@@ -26,6 +26,7 @@
     "@fastify/swagger": "^8.14.0",
     "@fastify/swagger-ui": "^4.0.0",
     "@prisma/client": "5.16.1",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.10",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.11",
