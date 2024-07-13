@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
+import { hash } from "crypto";
 
 export async function createUser(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post("/user/create", {
@@ -35,6 +36,7 @@ export async function createUser(app: FastifyInstance) {
       if (verificaremail) {
         throw new ClientError("This email alreay exists!");
       }
+      // const hashPassword = await hash(password, 8);
       const user = await db.user.create({
         data: {
           username,
