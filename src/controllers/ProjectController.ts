@@ -122,3 +122,54 @@ export async function getProjectbyId(app: FastifyInstance) {
     }
   );
 }
+
+//deletar projecto
+
+export async function deleteProject(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().delete(
+    "/project/:projectId",
+    {
+      schema: {
+        params: z.object({
+          projectId: z.string().transform((valor) => {
+            const numero = Number(valor);
+            if (isNaN(numero) || numero <= 0) {
+              throw new ClientError(
+                "Invalid type number, it must be positive integer number!"
+              );
+            }
+            return numero;
+          }),
+        }),
+      },
+    },
+    async (request, response) => {
+      const { projectId } = request.params;
+
+      //verificar se o project existe
+      const verificar = await db.project.findFirst({
+        where: { id: projectId },
+        select: {
+          id: true,
+          name: true,
+          userId: true,
+        },
+      });
+      if (!verificar) {
+        throw new ClientError("Project not found!");
+      }
+
+      await db.project.delete({
+        where: { id: projectId },
+      });
+
+      return response.code(200).send({
+        project: {
+          id: projectId,
+          name: verificar.name,
+          userId: verificar.userId,
+        },
+      });
+    }
+  );
+}
