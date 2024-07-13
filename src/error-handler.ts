@@ -3,8 +3,10 @@ import { ZodError } from "zod";
 import { ClientError } from "./error/client-error";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
+
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
-  console.log(error);
+  console.error(error);
+
   if (error instanceof ZodError) {
     return reply.status(400).send({
       message: "Invalid input",
@@ -14,6 +16,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       })),
     });
   }
+
   if (error instanceof ClientError) {
     return reply.status(400).send({ message: error.message });
   }
