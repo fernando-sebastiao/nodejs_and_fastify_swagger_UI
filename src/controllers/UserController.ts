@@ -5,39 +5,62 @@ import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 import { hash } from "crypto";
 import bycrpt from "bcrypt";
+import { errorHandler } from "../error-handler";
 
 export async function createUser(app: FastifyInstance) {
+  app.setErrorHandler(errorHandler);
+
+  const createUserSchema = z.object({
+    username: z
+      .string({ required_error: "Username is required" })
+      .min(4, "The username must be at least 4 characters long"),
+    password: z
+      .string({ required_error: "Password is required" })
+      .min(6, "Password must be at least 6 characters long"),
+    email: z
+      .string({ required_error: "Email is required" })
+      .email("Invalid email format"),
+  });
+
   app.withTypeProvider<ZodTypeProvider>().post("/user/create", {
     schema: {
       description: "Create a new user",
       tags: ["User"],
-      body: z.object({
-        username: z
-          .string({ required_error: "Username is required" })
-          .min(4, "The username must be at least 3 characters long"),
-        password: z
-          .string({ required_error: "Password is required" })
-          .min(6, "Password must be at least 6 characters long"),
-        email: z
-          .string({ required_error: "Email is required" })
-          .email("Invalid email format"),
-      }),
+      body: createUserSchema,
     },
     handler: async (request, reply) => {
-      const { username, password, email } = request.body;
-      // Verificar se o email já existe
-      const verificarnome = await db.user.findFirst({ where: { username } });
-      if (verificarnome) {
-        throw new ClientError("This username alreay exists!");
+      // Verificar se o corpo da requisição está vazio
+      if (!request.body) {
+        throw new ClientError("Request body cannot be empty");
       }
 
-      const verificaremail = await db.user.findUnique({
-        where: { email },
-      });
-      if (verificaremail) {
-        throw new ClientError("This email alreay exists!");
+      // Validar o corpo da requisição usando safeParse
+      const parsed = createUserSchema.safeParse(request.body);
+      if (!parsed.success) {
+        const errorMessages = parsed.error.errors
+          .map((err) => `${err.path.join(".")} - ${err.message}`)
+          .join(", ");
+        throw new ClientError(`Validation failed: ${errorMessages}`);
       }
+
+      const { username, password, email } = parsed.data;
+
+      // Verificar se o username já existe
+      const verificarnome = await db.user.findFirst({ where: { username } });
+      if (verificarnome) {
+        throw new ClientError("This username already exists!");
+      }
+
+      // Verificar se o email já existe
+      const verificaremail = await db.user.findUnique({ where: { email } });
+      if (verificaremail) {
+        throw new ClientError("This email already exists!");
+      }
+
+      // Criptografar a senha
       const hashPassword = await bycrpt.hash(password, 8);
+
+      // Criar o usuário
       const user = await db.user.create({
         data: {
           username,
@@ -46,13 +69,12 @@ export async function createUser(app: FastifyInstance) {
         },
       });
 
-      return reply
-        .status(201)
-        .send({ data: [{ username: user.username, email: user.email }] });
+      return reply.status(201).send({
+        data: [{ username: user.username, email: user.email }],
+      });
     },
   });
 }
-
 //pegar todos os users
 export async function getallUsers(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
