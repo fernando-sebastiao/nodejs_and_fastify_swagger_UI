@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createproject } from "../controllers/ProjectController";
+import { createproject, getallProject } from "../controllers/ProjectController";
 import {
   createUser,
   deleteUser,
@@ -17,4 +17,5 @@ export const routes = async (app: FastifyInstance) => {
   app.register(updateUser);
   //rotas do project
   app.register(createproject);
+  app.register(getallProject);
 };

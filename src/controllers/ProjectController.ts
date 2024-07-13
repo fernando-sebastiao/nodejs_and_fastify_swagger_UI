@@ -5,7 +5,7 @@ import { ClientError } from "../error/client-error";
 import { db } from "../lib/db";
 
 export async function createproject(app: FastifyInstance) {
-  app.withTypeProvider<ZodTypeProvider>().post("/project", {
+  app.withTypeProvider<ZodTypeProvider>().post("/project/create", {
     schema: {
       description: "Create a new project",
       tags: ["Project"],
@@ -55,4 +55,28 @@ export async function createproject(app: FastifyInstance) {
       return reply.status(201).send(project);
     },
   });
+}
+
+export async function getallProject(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/projects",
+    {
+      schema: {
+        description: "Get all Project's",
+        tags: ["Project"],
+      },
+    },
+    async (req, res) => {
+      const project = await db.project.findMany({
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          userId: true,
+          createdAt: true,
+        },
+      });
+      return res.code(200).send(project);
+    }
+  );
 }
