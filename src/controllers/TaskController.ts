@@ -3,6 +3,7 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
 import { db } from "../lib/db";
 import { ClientError } from "../error/client-error";
+import { title } from "process";
 
 export async function createTasks(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -58,7 +59,7 @@ export async function createTasks(app: FastifyInstance) {
 //getall Tasks
 export async function getallTasks(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
-    "/Tasks",
+    "/tasks",
     {
       schema: {
         description: "Get all Tasks",
@@ -67,12 +68,20 @@ export async function getallTasks(app: FastifyInstance) {
     },
     async (req, res) => {
       const task = await db.task.findMany({
+        orderBy: {
+          id: "asc",
+        },
         select: {
           id: true,
           title: true,
           description: true,
           status: true,
-          userId: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
           projectId: true,
         },
       });
