@@ -12,6 +12,7 @@ import {
   getUserbyId,
   updateUser,
 } from "../controllers/UserController";
+import { createTasks } from "../controllers/TaskController";
 
 export const routes = async (app: FastifyInstance) => {
   //rotas do user
@@ -20,6 +21,7 @@ export const routes = async (app: FastifyInstance) => {
   app.register(getUserbyId);
   app.register(deleteUser);
   app.register(updateUser);
+  app.register(createTasks);
   //rotas do project
   app.register(createproject);
   app.register(getallProject);
