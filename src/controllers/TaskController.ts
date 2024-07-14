@@ -54,3 +54,29 @@ export async function createTasks(app: FastifyInstance) {
     }
   );
 }
+
+//getall Tasks
+export async function getallTasks(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/Tasks",
+    {
+      schema: {
+        description: "Get all Tasks",
+        tags: ["Task"],
+      },
+    },
+    async (req, res) => {
+      const task = await db.task.findMany({
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          userId: true,
+          projectId: true,
+        },
+      });
+      return res.code(200).send(task);
+    }
+  );
+}
