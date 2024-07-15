@@ -150,3 +150,44 @@ export async function getTaskbyId(app: FastifyInstance) {
     }
   );
 }
+
+export function updateTasks(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().put(
+    "/tasks/update/:id",
+    {
+      schema: {
+        params: z.object({
+          id: z.number(),
+        }),
+        body: z.object({
+          title: z.string().optional(),
+          description: z.string().optional(),
+          status: z
+            .enum(["pending", "in-progress", "completed"], {
+              message: "Status must be pending, in-progress, or completed",
+            })
+            .optional(),
+          projectId: z.number().optional(),
+          userId: z.number().optional(),
+        }),
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      const { title, description, status, projectId, userId } = req.body;
+      const task = await db.task.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+          description,
+          status,
+          projectId,
+          userId,
+        },
+      });
+      return res.code(200).send({ message: "Task updated successfully", task });
+    }
+  );
+}
