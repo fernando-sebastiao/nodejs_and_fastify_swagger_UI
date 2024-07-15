@@ -111,3 +111,42 @@ export async function deleteTask(app: FastifyInstance) {
     }
   );
 }
+//rota para update tasks
+
+export async function getTaskbyId(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/tasks/:id",
+    {
+      schema: {
+        params: z.object({
+          id: z.number(),
+        }),
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      const task = await db.task.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          projectId: true,
+        },
+      });
+      if (!task) {
+        throw new ClientError("Task not found");
+      }
+      return res.code(200).send(task);
+    }
+  );
+}
