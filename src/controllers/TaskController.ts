@@ -90,3 +90,24 @@ export async function getallTasks(app: FastifyInstance) {
   );
 }
 //rota para deletar tasks
+export async function deleteTask(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().delete(
+    "/tasks/delete/:id",
+    {
+      schema: {
+        params: z.object({
+          id: z.number(),
+        }),
+      },
+    },
+    async (req, res) => {
+      const { id } = req.params;
+      const task = await db.task.delete({
+        where: {
+          id,
+        },
+      });
+      return res.code(200).send({ message: "Task deleted successfully", task });
+    }
+  );
+}
