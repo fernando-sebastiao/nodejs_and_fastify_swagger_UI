@@ -89,3 +89,4 @@ export async function getallTasks(app: FastifyInstance) {
     }
   );
 }
+//rota para deletar tasks
