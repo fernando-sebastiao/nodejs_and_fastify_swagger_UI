@@ -21,6 +21,14 @@ import {
   getTaskbyId,
   updateTasks,
 } from "../controllers/TaskController";
+import {
+  createComment,
+  deleteComment,
+  filterComment,
+  getAllComment,
+  getCommentById,
+  updateComment,
+} from "../controllers/CommentController";
 
 export const routes = async (app: FastifyInstance) => {
   //rotas do user
@@ -42,4 +50,11 @@ export const routes = async (app: FastifyInstance) => {
   app.register(getallProject);
   app.register(deleteProject);
   app.register(getProjectbyId);
+  //rotas do comment
+  app.register(createComment);
+  app.register(updateComment);
+  app.register(deleteComment);
+  app.register(getCommentById);
+  app.register(filterComment);
+  app.register(getAllComment);
 };
