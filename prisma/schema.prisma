@@ -8,14 +8,15 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   username  String
   password  String
-  email     String    @unique
-  createdAt DateTime  @default(now())
+  email     String      @unique
+  createdAt DateTime    @default(now())
   projects  Project[]
   tasks     Task[]
   comments  Comment[]
+  userAcess UserAcess[]
 }
 
 model Project {
@@ -51,4 +52,22 @@ model Comment {
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserAcess {
+  id         Int      @id @default(autoincrement())
+  Acess      Acess?   @relation(fields: [acessId], references: [id])
+  acessId    Int?
+  created_at DateTime @default(now())
+  update_at  DateTime @updatedAt
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+}
+
+model Acess {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  userAcess  UserAcess[]
+  created_at DateTime    @default(now())
+  update_at  DateTime    @updatedAt
 }
