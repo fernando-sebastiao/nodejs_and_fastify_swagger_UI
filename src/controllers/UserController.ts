@@ -234,3 +234,33 @@ export async function updateUser(app: FastifyInstance) {
     }
   );
 }
+//filter user
+export async function filterUser(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/user/filter",
+    {
+      schema: {
+        querystring: z.object({
+          username: z.string().optional(),
+          email: z.string().email().optional(),
+        }),
+      },
+    },
+    async (request, response) => {
+      const { username, email } = request.query;
+
+      const user = await db.user.findMany({
+        where: {
+          username: {
+            contains: username,
+          },
+          email: {
+            contains: email,
+          },
+        },
+      });
+
+      return response.code(200).send(user);
+    }
+  );
+}

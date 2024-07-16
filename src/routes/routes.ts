@@ -8,6 +8,7 @@ import {
 import {
   createUser,
   deleteUser,
+  filterUser,
   getallUsers,
   getUserbyId,
   updateUser,
@@ -15,6 +16,7 @@ import {
 import {
   createTasks,
   deleteTask,
+  filterTasks,
   getallTasks,
   getTaskbyId,
   updateTasks,
@@ -27,12 +29,14 @@ export const routes = async (app: FastifyInstance) => {
   app.register(getUserbyId);
   app.register(deleteUser);
   app.register(updateUser);
+  app.register(filterUser);
   //rotas das tasks
   app.register(createTasks);
   app.register(getallTasks);
   app.register(deleteTask);
   app.register(updateTasks);
   app.register(getTaskbyId);
+  app.register(filterTasks);
   //rotas do project
   app.register(createproject);
   app.register(getallProject);

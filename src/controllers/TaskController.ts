@@ -150,8 +150,8 @@ export async function getTaskbyId(app: FastifyInstance) {
     }
   );
 }
-
-export function updateTasks(app: FastifyInstance) {
+//update tasks
+export async function updateTasks(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().put(
     "/tasks/update/:id",
     {
@@ -175,19 +175,73 @@ export function updateTasks(app: FastifyInstance) {
     async (req, res) => {
       const { id } = req.params;
       const { title, description, status, projectId, userId } = req.body;
-      const task = await db.task.update({
+
+      const task = await db.task.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (!task) {
+        throw new ClientError("Task not found");
+      }
+      const updateTask = await db.task.update({
         where: {
           id,
         },
         data: {
-          title,
-          description,
+          title: title || task.title,
+          description: description || task.description,
+          status: status || task.status,
+          projectId: projectId || task.projectId,
+          userId: userId || task.userId,
+        },
+      });
+      return res
+        .code(200)
+        .send({ message: "Task updated successfully", updateTask });
+    }
+  );
+}
+//filter tasks by status, project and user
+export async function filterTasks(app: FastifyInstance) {
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/tasks/filter",
+    {
+      schema: {
+        querystring: z.object({
+          status: z.string().optional(),
+          projectId: z.number().optional(),
+          userId: z.number().optional(),
+        }),
+      },
+    },
+    async (req, res) => {
+      const { status, projectId, userId } = req.query as {
+        status?: string;
+        projectId?: number;
+        userId?: number;
+      };
+      const task = await db.task.findMany({
+        where: {
           status,
           projectId,
           userId,
         },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          projectId: true,
+        },
       });
-      return res.code(200).send({ message: "Task updated successfully", task });
+      return res.code(200).send(task);
     }
   );
 }
