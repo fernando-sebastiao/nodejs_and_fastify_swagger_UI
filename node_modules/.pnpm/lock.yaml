@@ -62,9 +62,6 @@ importers:
       ts-node-dev:
         specifier: ^2.0.0
         version: 2.0.0(@types/node@20.14.10)(typescript@5.5.3)
-      tsup:
-        specifier: ^8.1.2
-        version: 8.1.2(tsx@4.16.2)(typescript@5.5.3)(yaml@2.4.5)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -72,6 +69,9 @@ importers:
       '@types/faker':
         specifier: ^6.6.9
         version: 6.6.9
+      tsup:
+        specifier: ^8.0.2
+        version: 8.1.2(tsx@4.16.2)(typescript@5.5.3)(yaml@2.4.5)
       tsx:
         specifier: ^4.16.2
         version: 4.16.2
