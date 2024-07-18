@@ -1,9 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
-import { db } from "../lib/db";
 import { ClientError } from "../error/client-error";
-import { title } from "process";
+import { db } from "../lib/db";
 
 export async function createTasks(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
