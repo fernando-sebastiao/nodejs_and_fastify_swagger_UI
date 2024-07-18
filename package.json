@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "build": "tsup src",
     "seed": "ts-node-dev prisma/seed.ts"
   },
   "prisma": {
